@@ -26,17 +26,28 @@ io.on('connection', (socket) => {
     })
 
     socket.on('sendOffer', (data) => {
-        const { room, offerSDP, offerType, guardName, guardRole, ices } = data;
+        const { room, offerSDP, offerType, guardName, guardRole } = data;
         const offerData= {
             offerSDP: offerSDP,
             offerType: offerType,
             guardName: guardName,
             guardRole: guardRole,
-            ices: ices
         }
 
-        console.log(`Sending offer to room ${room}: ${ices}`)
+        console.log(`Sending offer to room ${room}:`)
         socket.to(room).emit('message-receive', offerData)
+    })
+
+    socket.on('offerICE', (data) => {
+        const { room, ices} = data;
+        console.log(`Sending Ice ${ices} to ${room}`)
+        socket.to(room).emit('offerReceiveIce', ices)
+    })
+
+    socket.on('answerICE', (data) => {
+        const { room, ices} = data;
+        console.log(`Sending Ice ${ices} to ${room}`)
+        socket.to(room).emit('answerReceiveIce', ices)
     })
 
     socket.on('sendAnswer', (data) => {
